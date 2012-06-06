@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'commander/import'
+require 'rmusic'
+
+program :version, '1.0'
+program :description, 'A command line interface for RMusic'
+ 
+command :chords do |c|
+  c.syntax = 'rmusic chords [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    g = Rmusic::StringedInstrument.guitar()
+
+    args.each { |arg|
+      Rmusic::ChordFinder.find( g, arg ).each { |c|
+        print "#{arg}\n#{c.pretty}\n\n"
+        break
+      }
+    }
+  end
+end
+

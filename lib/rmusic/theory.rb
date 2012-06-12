@@ -127,6 +127,15 @@ class ChordSpelling
       note( root, t )
     }
   end
+  def inversions( root )
+    map = {}
+    inv = 1
+    notes( root ).each { |n|
+      map[ n ] = inv
+      inv += 1
+    }
+    map
+  end
 end
 
 class ChordLibrary

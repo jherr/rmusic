@@ -11,13 +11,14 @@ command :chords do |c|
   c.syntax = 'rmusic chords [options]'
   c.summary = ''
   c.description = ''
-  c.example 'description', 'command example'
-  c.option '--some-switch', 'Some switch that does something'
+  c.example 'Asus4 C# Dmin', 'Finds this sequence of chords'
+  c.option '--capo FRET', Integer, 'Positions a capo'
+  c.option '--open', 'Prefer open chords'
   c.action do |args, options|
     g = Rmusic::StringedInstrument.guitar()
-
+  
     args.each { |arg|
-      Rmusic::ChordFinder.find( g, arg ).each { |c|
+      Rmusic::ChordCache.find( g, arg ).each { |c|
         print "#{arg}\n#{c.pretty}\n\n"
         break
       }
@@ -25,3 +26,15 @@ command :chords do |c|
   end
 end
 
+command :buildcache do |c|
+  c.syntax = 'rmusic buildcache'
+  c.action do |args, options|
+    g = Rmusic::StringedInstrument.guitar()
+    12.times { |n|
+      Rmusic::ChordLibrary::CHORDS.each { |c|
+        print "#{c.name}\n"
+        Rmusic::ChordCache.find_chord( g, c, n )
+      }
+    }
+  end
+end

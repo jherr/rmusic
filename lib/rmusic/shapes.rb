@@ -9,19 +9,22 @@ module Rmusic
     CLASSIC = 2
   
     attr_reader :locations
+    attr_reader :extra
+    
     def initialize( shape, difficulty = Shape::HARD, extra = 0 )
       lmin = shape.select { |n| n != - 1 }.min
       @locations = shape.map { |n| n - lmin }
       @difficulty = difficulty
       @extra = extra
     end
+    
     def compare( other )
-      diff = @difficulty
+      diff = 0
       other.locations.each_index { |string|
         d2 = ( @locations[ string ] - other.locations[ string ] ).abs
         diff += d2 * d2
       }
-      diff
+      { :difficulty => @difficulty + diff, :match => ( diff == 0 ) }
     end
   end
 
@@ -308,13 +311,16 @@ module Rmusic
       Shape.new( [5,0,0,0,3,0], Shape::EASY )
     ]
     def self.compare( shape )
-      min = 50
+      min = { :difficulty => 50, :shape => nil }
+      extras = 0
       SHAPES.each { |s|
-        c = s.compare( shape )
-        min = c if ( c < min )
-        break if ( min == 0 )
+        info = s.compare( shape )
+        if ( info[:difficulty] < min[:difficulty] )
+           min[:difficulty] = info[:difficulty]
+           min[:shape] = s
+        end
       }
-      min
+      { :min => min[:difficulty], :extras => ( min[:shape] != nil ) ? min[:shape].extra : 0 }
     end
   end
 
